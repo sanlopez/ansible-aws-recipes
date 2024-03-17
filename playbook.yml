@@ -20,6 +20,11 @@
       become_user: scipion
       shell: "/home/scipion/cryosparc4/update_cryosparc_license.sh {{ cryosparc_licenses[inventory_hostname] }}"
 
+    - name: launch CryoSPARC test
+      become: yes
+      become_user: scipion
+      shell: "/home/scipion/scipion3/scipion3 tests cryosparc2.tests.test_protocols_cryosparc2.TestCryosparcClassify2D"
+
     - name: warm up root disk
       become: yes
       shell: "tmux new-session -d -s warm_up_root_disk 'sudo fio --filename=/dev/nvme0n1p1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
