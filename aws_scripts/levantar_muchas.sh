@@ -5,11 +5,11 @@
 # AWS CLI debe estar instalado y configurado
 AMI_ID="ami-0a74e1f41e44520e0"    # Reemplaza con tu AMI ID
 INSTANCE_TYPE="g4dn.4xlarge"		  # Tipo de instancia
-# Para TOMO: g4dn.4xlarge
-# Para SPA-FLEX: g4dn.2xlarge
+# Para TOMO: g4dn.8xlarge
+# Para SPA-FLEX: g4dn.4xlarge
 KEY_NAME="i2pc-training"          # Tu key pair
 SECURITY_GROUP="sg-077f5c7c"     	# Tu security group
-SUBNET_ID="subnet-36480d41"      	# Opcional, si lo necesitas
+SUBNET_ID="subnet-36480d41"      	# Tu subnet ID, subnet-36480d41 es Irlanda
 HOWMANY=16                        # Número de instancias a crear    
 BASE_NAME="i2pc-flex-training"		# Base name
 COSTE_TAG="curso-i2pc-flex-2025"  # Tag para el coste
@@ -17,9 +17,10 @@ COSTE_TAG="curso-i2pc-flex-2025"  # Tag para el coste
 # Por ejemplo: curso-i2pc-flex-2025, curso-i2pc-tomo-2026, etc.
 
 echo "Por favor, revisa las variables antes de continuar:"
-echo "More, vamos a levantar $HOWMANY maquinas"
+echo "Morch, vamos a levantar $HOWMANY maquinas"
 echo "Se van a levantar de tipo: $INSTANCE_TYPE"
 echo "El nombre base de las instancias será: $BASE_NAME"
+echo "El cost tag será: $COSTE_TAG"
 read -p "¿Quieres continuar? (s/N): " CONTINUAR
 if [[ "$CONTINUAR" != "s" ]]; then
   echo "Operación cancelada."
@@ -27,7 +28,7 @@ if [[ "$CONTINUAR" != "s" ]]; then
 fi
 
 # Generación de archivo CSV auxiliar para luego
-OUTPUT_FILE="../auxiliary_files/$BASE_NAME.csv"
+OUTPUT_FILE="../list_creation/$BASE_NAME.csv"
 echo "Se va a volcar la información de las instancias en el archivo: $OUTPUT_FILE"
 echo "Instance Name, Instance ID, Elastic IP" > $OUTPUT_FILE
 if [ -f $OUTPUT_FILE ]; then
@@ -81,6 +82,7 @@ for i in $(seq -w 1 $HOWMANY); do
     --network-interface-id $NETWORK_IFACE \
     --allow-reassociation
   echo "Elastic IP asociada a $NAME"
+  
   # 6. Obtener la IP pública de la instancia para guardarla
   ELASTIC_IP=$(aws ec2 describe-addresses \
               --allocation-ids $ALLOC_ID \
