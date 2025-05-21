@@ -26,9 +26,16 @@ if [[ "$CONTINUAR" != "s" ]]; then
   exit 1
 fi
 
-OUTPUT_FILE="$BASE_NAME.csv"
+# Generación de archivo CSV auxiliar para luego
+OUTPUT_FILE="../auxiliary_files/$BASE_NAME.csv"
 echo "Se va a volcar la información de las instancias en el archivo: $OUTPUT_FILE"
-echo "Instance Name, Elastic IP, Instance ID, Public IP" > $OUTPUT_FILE
+echo "Instance Name, Instance ID, Elastic IP" > $OUTPUT_FILE
+if [ -f $OUTPUT_FILE ]; then
+    echo "El archivo fue creado correctamente."
+else
+    echo "Error: el archivo no fue creado, revisa la ruta de OUTPUT_FILE."
+    exit 1
+fi
 
 # Instances creation
 for i in $(seq -w 1 $HOWMANY); do
