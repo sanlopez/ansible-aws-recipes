@@ -1,0 +1,52 @@
+- hosts: servers
+  strategy: free
+  vars:
+    cryosparc_licenses:
+      xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+  tasks:
+    - name: copy update_cryosparc_license script to remote machine
+      become: yes
+      become_user: scipion
+      copy:
+        src: /Users/miceta/repos/ansible-aws-recipes/update_cryosparc_license.sh
+        dest: /home/scipion/cryosparc4/update_cryosparc_license.sh
+        mode: 0755
+        force: yes
+    
+    - name: copy remove_cryosparc_workers script to remote machine
+      become: yes
+      become_user: scipion
+      copy:
+        src: /Users/miceta/repos/ansible-aws-recipes/remove_cryosparc_workers.sh
+        dest: /home/scipion/cryosparc4/remove_cryosparc_workers.sh
+        mode: 0755
+        force: yes
+
+    - name: copy register_cryosparc_worker script to remote machine
+      become: yes
+      become_user: scipion
+      copy:
+        src: /Users/miceta/repos/ansible-aws-recipes/register_cryosparc_worker.sh
+        dest: /home/scipion/cryosparc4/register_cryosparc_worker.sh
+        mode: 0755
+        force: yes
+
+    - name: update cryosparc license
+      become: yes
+      become_user: scipion
+      shell: "/home/scipion/cryosparc4/update_cryosparc_license.sh {{ cryosparc_licenses[inventory_hostname] }}"
+
+    - name: remove cryosparc workers and register current machine
+      become: yes
+      become_user: scipion
+      shell: "/home/scipion/cryosparc4/remove_cryosparc_workers.sh"
+
+    - name: register current machine
+      become: yes
+      become_user: scipion
+      shell: "tmux new-session -d -s debug_sess 'bash /home/scipion/cryosparc4/register_cryosparc_worker.sh'"
