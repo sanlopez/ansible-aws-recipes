@@ -6,7 +6,6 @@ license=$1
 
 # Update hostname and license on master and worker config
 full_host_name=`hostname -f`
-host_name=`hostname`
 
 /home/scipion/cryosparc4/cryosparc_master/bin/cryosparcm stop
 # Modify MASTER config
