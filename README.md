@@ -4,6 +4,11 @@ This repository contains the necessary tools to set up CryoEM course machines in
  ## Execution order and guide (Usage)
 Although the intended user for this repository is an ADVANCED system administrator, here you can find the recommended workflow:
  * Use the *levantar_muchas.sh* script in *aws_scripts* to deploy your desired machines. Carefully review the variables.
+ * Add your CS licenses in the text file specified by generate_ansible_cs_vars, in a txt with a license in each line
+ * Use the generate_ansible_cs_vars and generate_ansible_inventory scripts to get the required texts to continue. *Execute both of them from within their directories (ie after cd list_creation)*
+ * Fill in playbook.yml with the ansible CS vars
+ * Fill in the inventory with the generated inventory
+ * Execute the ansible playbook by launching: ansible-playbook -i inventory playbook.yml 
 
 ## Requirements
 The program requires the following information to be provided:
