@@ -28,9 +28,9 @@ if [[ "$CONTINUAR" != "s" ]]; then
 fi
 
 # Generación de archivo CSV auxiliar para luego
-OUTPUT_FILE="../list_creation/$BASE_NAME.csv"
+OUTPUT_FILE="../list_creation/instances_output.csv"
 echo "Se va a volcar la información de las instancias en el archivo: $OUTPUT_FILE"
-echo "Instance Name, Instance ID, Elastic IP" > $OUTPUT_FILE
+echo "Instance Name, Elastic IP" > $OUTPUT_FILE
 if [ -f $OUTPUT_FILE ]; then
     echo "El archivo fue creado correctamente."
 else
@@ -88,7 +88,7 @@ for i in $(seq -w 1 $HOWMANY); do
               --allocation-ids $ALLOC_ID \
               --query 'Addresses[0].PublicIp' --output text)
 
-  echo "$NAME, $INSTANCE_ID, $ELASTIC_IP"
-  echo "$NAME, $INSTANCE_ID, $ELASTIC_IP" >> $OUTPUT_FILE
+  echo "$NAME, $ELASTIC_IP"
+  echo "$NAME, $ELASTIC_IP" >> $OUTPUT_FILE
   
 done
