@@ -1,4 +1,5 @@
 - hosts: servers
+  strategy: free
   vars:
     cryosparc_licenses:
       xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -6,29 +7,54 @@
       xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
       xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
       xxx.xxx.xxx.xxx: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
   tasks:
     - name: copy update_cryosparc_license script to remote machine
       become: yes
       become_user: scipion
       copy:
-        src: /local/path/to/update_cryosparc_license.sh
+        src: ./cs_scripts/update_cryosparc_license.sh
         dest: /home/scipion/cryosparc4/update_cryosparc_license.sh
         mode: 0755
+        force: yes
+    
+    - name: copy remove_cryosparc_workers script to remote machine
+      become: yes
+      become_user: scipion
+      copy:
+        src: ./cs_scripts/remove_cryosparc_workers.sh
+        dest: /home/scipion/cryosparc4/remove_cryosparc_workers.sh
+        mode: 0755
+        force: yes
+
+    - name: copy register_cryosparc_worker script to remote machine
+      become: yes
+      become_user: scipion
+      copy:
+        src: ./cs_scripts/register_cryosparc_worker.sh
+        dest: /home/scipion/cryosparc4/register_cryosparc_worker.sh
+        mode: 0755
+        force: yes
 
     - name: update cryosparc license
       become: yes
       become_user: scipion
       shell: "/home/scipion/cryosparc4/update_cryosparc_license.sh {{ cryosparc_licenses[inventory_hostname] }}"
 
-    - name: launch CryoSPARC test
+    - name: remove cryosparc workers
       become: yes
       become_user: scipion
-      shell: "/home/scipion/scipion3/scipion3 tests cryosparc2.tests.test_protocols_cryosparc2.TestCryosparcClassify2D"
+      shell: "/home/scipion/cryosparc4/remove_cryosparc_workers.sh"
+
+    - name: register current machine
+      become: yes
+      become_user: scipion
+      shell: "/home/scipion/cryosparc4/register_cryosparc_worker.sh"
 
     - name: warm up root disk
       become: yes
       shell: "tmux new-session -d -s warm_up_root_disk 'sudo fio --filename=/dev/nvme0n1p1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
 
-    - name: warm up data disk
-      become: yes
-      shell: "tmux new-session -d -s warm_up_data_disk 'sudo fio --filename=/dev/nvme1n1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
+    #- name: warm up data disk
+    #  become: yes
+    #  shell: "tmux new-session -d -s warm_up_data_disk 'sudo fio --filename=/dev/nvme1n1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
