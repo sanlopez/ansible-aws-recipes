@@ -19,6 +19,8 @@ fi
 # Clear or create the inventory file
 > $INVENTORY_FILE
 
+echo -e "[servers]" >> $INVENTORY_FILE
+
 # Read the CSV file line by line, skipping the header
 tail -n +2 "$INPUT_MACHINES" | while IFS=',' read -r INSTANCE_NAME ELASTIC_IP; do
   # Write the IP and common string to the inventory file
