@@ -45,7 +45,7 @@ tail -n +2 "$INPUT_MACHINES" | while IFS=',' read -r INSTANCE_NAME ELASTIC_IP; d
   INDEX=$((INDEX + 1))
 
   # Write the key:value pair to the output file
-  echo "$ELASTIC_IP: \"$LICENSE\"" >> $OUTPUT_FILE
+  echo "$INSTANCE_NAME: \"$LICENSE\"" >> $OUTPUT_FILE
 done
 
 echo "License list generated in $OUTPUT_FILE"
