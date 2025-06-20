@@ -51,10 +51,19 @@
       become_user: scipion
       shell: "/home/scipion/cryosparc4/register_cryosparc_worker.sh"
 
+    - name: delete Google Chrome lock file
+      become: yes
+      become_user: scipion
+      shell: "rm /home/scipion/.config/google-chrome/SingletonLock"
+
     - name: warm up root disk
       become: yes
       shell: "tmux new-session -d -s warm_up_root_disk 'sudo fio --filename=/dev/nvme0n1p1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
 
-    #- name: warm up data disk
-    #  become: yes
-    #  shell: "tmux new-session -d -s warm_up_data_disk 'sudo fio --filename=/dev/nvme1n1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
+    - name: warm up root disk 2
+      become: yes
+      shell: "tmux new-session -d -s warm_up_root_disk 'sudo fio --filename=/dev/nvme1n1p1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
+
+    - name: warm up data disk
+      become: yes
+      shell: "tmux new-session -d -s warm_up_data_disk 'sudo fio --filename=/dev/nvme1n1 --rw=read --bs=128k --iodepth=32 --ioengine=libaio --direct=1 --name=volume-initialize'"
