@@ -13,6 +13,7 @@ SUBNET_ID="subnet-36480d41"      	# Tu subnet ID, subnet-36480d41 es Irlanda
 HOWMANY=16                        # Número de instancias a crear    
 BASE_NAME="i2pc-flex-training"		# Base name
 COSTE_TAG="curso-i2pc-flex-2025"  # Tag para el coste
+USER_TAG="i2pc-training"          # Tag para permitir permisos (de levantar y apagar maquinas) a otros roles
 # Generalmente: curso-i2pc-NOSEQUE-AÑO
 # Por ejemplo: curso-i2pc-flex-2025, curso-i2pc-tomo-2026, etc.
 
@@ -21,6 +22,7 @@ echo "Morch, vamos a levantar $HOWMANY maquinas"
 echo "Se van a levantar de tipo: $INSTANCE_TYPE"
 echo "El nombre base de las instancias será: $BASE_NAME"
 echo "El cost tag será: $COSTE_TAG"
+echo "El username tag será: $USER_TAG"
 read -p "¿Quieres continuar? (s/N): " CONTINUAR
 if [[ "$CONTINUAR" != "s" ]]; then
   echo "Operación cancelada."
@@ -51,7 +53,7 @@ for i in $(seq -w 1 $HOWMANY); do
     --security-group-ids $SECURITY_GROUP \
     --subnet-id $SUBNET_ID \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG}]" \
-    "ResourceType=volume,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG}]" \
+    "ResourceType=volume,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG},{Key=UserName,Value=$USER_TAG}]" \
     --query 'Instances[0].InstanceId' \
     --output text)
   echo "Instancia $NAME creada con ID: $INSTANCE_ID"
@@ -65,7 +67,7 @@ for i in $(seq -w 1 $HOWMANY); do
   # 3. Crear Elastic IP
   echo "Creando Elastic IP para la instancia $NAME"
   ALLOC_ID=$(aws ec2 allocate-address --domain vpc \
-    --tag-specifications "ResourceType=elastic-ip,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG}]" \
+    --tag-specifications "ResourceType=elastic-ip,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG},{Key=UserName,Value=$USER_TAG}]" \
     --query 'AllocationId' \
     --output text)
   echo "Elastic IP asignada con Allocation ID: $ALLOC_ID"
