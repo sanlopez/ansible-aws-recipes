@@ -52,7 +52,7 @@ for i in $(seq -w 1 $HOWMANY); do
     --key-name $KEY_NAME \
     --security-group-ids $SECURITY_GROUP \
     --subnet-id $SUBNET_ID \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG}]" \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG},{Key=UserName,Value=$USER_TAG}]" \
     "ResourceType=volume,Tags=[{Key=Name,Value=$NAME},{Key=Coste,Value=$COSTE_TAG},{Key=UserName,Value=$USER_TAG}]" \
     --query 'Instances[0].InstanceId' \
     --output text)
